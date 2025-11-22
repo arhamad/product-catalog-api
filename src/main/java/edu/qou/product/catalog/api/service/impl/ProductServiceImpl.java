@@ -6,7 +6,9 @@ import edu.qou.product.catalog.api.model.dto.ProductResponseDto;
 import edu.qou.product.catalog.api.model.entity.Product;
 import edu.qou.product.catalog.api.model.mapper.ProductMapper;
 import edu.qou.product.catalog.api.repository.ProductRepository;
+import edu.qou.product.catalog.api.service.NotificationService;
 import edu.qou.product.catalog.api.service.ProductService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,10 +20,18 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final ProductMapper productMapper;
 
-    public ProductServiceImpl(ProductRepository productRepository, ProductMapper productMapper) {
+    private final NotificationService notificationService;
+
+    public ProductServiceImpl(
+            ProductRepository productRepository,
+            ProductMapper productMapper,
+            @Qualifier("multiNotification") NotificationService notificationService
+    ) {
         this.productRepository = productRepository;
         this.productMapper = productMapper;
+        this.notificationService = notificationService;
     }
+
 
     @Override
     public List<ProductResponseDto> getAllProducts() {
@@ -42,7 +52,12 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponseDto createProduct(ProductRequestDto requestDto) {
         Product product = productMapper.toEntity(requestDto);
         Product savedProduct = productRepository.save(product);
-        return productMapper.toResponseDto(savedProduct);
+        ProductResponseDto responseDto = productMapper.toResponseDto(savedProduct);
+
+        // Send notification after product creation
+        notificationService.notifyProductCreated(responseDto);
+
+        return responseDto;
     }
 
     @Override
@@ -52,8 +67,12 @@ public class ProductServiceImpl implements ProductService {
 
         productMapper.updateEntityFromDto(requestDto, existingProduct);
         Product updatedProduct = productRepository.save(existingProduct);
+        ProductResponseDto responseDto = productMapper.toResponseDto(updatedProduct);
 
-        return productMapper.toResponseDto(updatedProduct);
+        // Send notification after product update
+        notificationService.notifyProductUpdated(responseDto);
+
+        return responseDto;
     }
 
     @Override
@@ -62,5 +81,8 @@ public class ProductServiceImpl implements ProductService {
             throw new ProductNotFoundException(id);
         }
         productRepository.deleteById(id);
+
+        // Send notification after product deletion
+        notificationService.notifyProductDeleted(id);
     }
 }

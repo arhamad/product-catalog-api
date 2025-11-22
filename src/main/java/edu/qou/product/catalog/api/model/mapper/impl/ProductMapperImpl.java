@@ -15,11 +15,11 @@ public class ProductMapperImpl implements ProductMapper {
         }
 
         Product product = new Product();
-        product.setName(dto.getName());
-        product.setDescription(dto.getDescription());
-        product.setPrice(dto.getPrice());
-        product.setStock(dto.getStock());
-        product.setCategory(dto.getCategory());
+        product.setName(dto.name());
+        product.setDescription(dto.description());
+        product.setPrice(dto.price());
+        product.setStock(dto.stock());
+        product.setCategory(dto.category());
         product.setCreatedAt(java.time.LocalDateTime.now());
         product.setUpdatedAt(java.time.LocalDateTime.now());
 
@@ -50,11 +50,11 @@ public class ProductMapperImpl implements ProductMapper {
             return;
         }
 
-        entity.setName(dto.getName());
-        entity.setDescription(dto.getDescription());
-        entity.setPrice(dto.getPrice());
-        entity.setStock(dto.getStock());
-        entity.setCategory(dto.getCategory());
+        entity.setName(dto.name());
+        entity.setDescription(dto.description());
+        entity.setPrice(dto.price());
+        entity.setStock(dto.stock());
+        entity.setCategory(dto.category());
         entity.setUpdatedAt(java.time.LocalDateTime.now());
     }
 }

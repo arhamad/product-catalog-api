@@ -4,6 +4,7 @@ import edu.qou.product.catalog.api.model.dto.ProductRequestDto;
 import edu.qou.product.catalog.api.model.dto.ProductResponseDto;
 import edu.qou.product.catalog.api.service.ProductService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,13 +13,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/product")
+@RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService productService;
-
-    public ProductController(ProductService productService) {
-        this.productService = productService;
-    }
 
     @GetMapping
     public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
